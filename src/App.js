@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import './App.css'
+import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { getUsers } from './store/features/userSlice'
+import { Route, Routes, useNavigate } from 'react-router-dom'
+import { Users } from './pages/Users'
+import { Posts } from './pages/Posts'
+import { Modal } from './components/Modal'
+import { WrongRoute } from './components/WrongRoute'
 
 function App() {
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(getUsers())
+  }, [dispatch])
+
+  const navigate = useNavigate()
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Routes>
+      <Route path="/users" element={<Users />}>
+        <Route path='/users/:id/albums' element={<Modal title="User's albums" onClose={() => navigate(-1)} />} />
+      </Route>
+      <Route path="/users/:id/posts" element={<Posts />} />
+      <Route path="*" element={<WrongRoute />} />
+    </Routes>
+  )
 }
 
-export default App;
+export default App
